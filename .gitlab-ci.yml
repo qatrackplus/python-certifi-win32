@@ -7,7 +7,7 @@ deploy:
   stage: deploy
   script:
   - pip install -U twine setuptools wheel
-  - python setup.py sdist, bdist_wheel
+  - python setup.py sdist bdist_wheel
   - twine upload -u $PYPI_USER -p $PYPI_PASS dist/*
   only:
   - tags
