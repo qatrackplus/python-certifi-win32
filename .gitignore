@@ -17,11 +17,12 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-
 man
 include
 .Python
 MANIFEST
+.venv
+.idea
 
 # Installer logs
 pip-log.txt

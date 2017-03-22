@@ -12,8 +12,8 @@ setup_kwargs = dict(
     author_email = 'andrew.leech@planetinnovation.com.au',
     license = 'BSD',
     url = 'https://gitlab.com/alelec/python-certifi-win32',
-    packages = ['python-certifi-win32'],
-    package_dir = {'python-certifi-win32': 'src'},
+    packages = ['certifi_win32'],
+    package_dir = {'certifi_win32': 'src'},
     data_files = [(get_python_lib(prefix=''), ['python-certifi-win32-init.pth'])],
     install_requires = ['wrapt>=1.10.4', 'wincertstore', 'certifi'],
 )

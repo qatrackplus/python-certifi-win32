@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import ctypes
-from ctypes import wintypes
 import os
-
-import wincertstore
 
 """
 This module copies the local store certificates to the current cacert.pem
@@ -22,14 +18,16 @@ def where():
 
 
 def get_pems(store_names=None):
+    import wincertstore
     store_names = store_names or ("CA", "ROOT")
     for store_name in store_names:
         with wincertstore.CertSystemStore(store_name) as store:
             for cert in store.itercerts(usage=wincertstore.SERVER_AUTH):
                 try:
+                    pem = cert.get_pem()
                     pem_entry = '# Label: "{name}"\n{pem}'.format(
                         name=cert.get_name(),
-                        pem=cert.get_pem().decode('ascii')
+                        pem=pem.decode('ascii') if isinstance(pem, bytes) else pem
                     )
                 except UnicodeEncodeError:
                     pem_entry = ''
@@ -38,23 +36,28 @@ def get_pems(store_names=None):
 
 
 def certifi_pem():
+    global CERTIFI_PEM
     if not CERTIFI_PEM:
+        import certifi
         CERTIFI_PEM = os.path.join(os.path.split(certifi.__file__)[0], 'cacert.pem')
         if not os.path.exists(CERTIFI_PEM):
             raise ValueError("Cannot find certifi cacert.pem")
-    return CERTIFI_PEM    
+    return CERTIFI_PEM
 
 
 def verify_combined_pem():
     existing_correct = False
-    
+
     if os.path.exists(PEM_PATH):
         chunk_size = 32
 
-        with open(certifi_pem()) as certifi_pem_handle:            
+        with open(certifi_pem()) as certifi_pem_handle:
             certifi_head = certifi_pem_handle.read(chunk_size)
-            certifi_pem_handle.seek(-chunk_size, os.SEEK_END)
-            tail_pos = certifi_pem_handle.tell()
+
+            certifi_pem_handle.seek(0, os.SEEK_END)
+            tail_pos = certifi_pem_handle.tell() - chunk_size
+            certifi_pem_handle.seek(tail_pos)
+
             certifi_tail = certifi_pem_handle.read(chunk_size)
 
         if os.path.getsize(PEM_PATH) > (tail_pos + chunk_size):
@@ -70,7 +73,8 @@ def verify_combined_pem():
 
 
 def generate_pem():
-    import certifi
+    import ctypes
+    from ctypes import wintypes
 
     # Create ctypes wrapper for Win32 functions we need, with correct argument/return types
     _CreateMutex = ctypes.windll.kernel32.CreateMutexA
@@ -91,19 +95,18 @@ def generate_pem():
 
     INFINITE = 0xFFFFFFFF
 
-    handle = _CreateMutex(None, False, 'Global_certifi')
+    handle = _CreateMutex(None, False, b'global_certifi_win32')
     _WaitForSingleObject(handle, INFINITE)
 
     if not os.path.exists(PEM_PATH):
         os.makedirs(os.path.dirname(PEM_PATH))
 
-    local_pem = certifi_pem()
-        
-    with open(PEM_PATH, 'w') as f:
+    orig_pem = certifi_pem()
+    import shutil
+    shutil.copy(orig_pem, PEM_PATH)
 
-        with open(local_pem) as lf:
-            f.write(lf.read())
-
+    import codecs
+    with codecs.open(PEM_PATH, 'a', 'utf-8') as f:
         for pem in get_pems():
             f.write(pem)
 
