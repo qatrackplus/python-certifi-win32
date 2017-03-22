@@ -6,7 +6,8 @@ from distutils.sysconfig import get_python_lib
 
 setup_kwargs = dict(
     name = 'python-certifi-win32',
-    version = '1.0',
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     description = 'Add windows certificate store to certifi cacerts.',
     author = 'Andrew Leech',
     author_email = 'andrew.leech@planetinnovation.com.au',
