@@ -1,0 +1,1 @@
+import os, sys; __import__('python-certifi-win32.bootstrap') and sys.modules['python-certifi-win32.bootstrap'].bootstrap()

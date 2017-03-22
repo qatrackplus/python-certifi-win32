@@ -1,25 +1,23 @@
-=========
-autowrapt
-=========
+====================
+python-certifi-win32
+====================
 
-A Python module for triggering monkey patching of a Python application,
-without the need to actually modify the Python application itself to
-setup the monkey patches.
+This package patches certifi at runtime to also include certificates from the windows certificate store.
 
-The package works in conjunction with the ``wrapt`` module. One would
-create post import hook patch modules per ``wrapt`` module requirements,
-and then list the names of the setuptools entrypoints you wish to activate
-in the ``AUTOWRAPT_BOOTSTRAP`` environment variable, when executing Python
-within the environment that the ``autowrapt`` module is installed.
+This will allow packages such as requests (and tools based on it, like pip) to verify tls/ssl 
+connections to servers who's ca is trusted by your windows install.
 
-To understand what is possible, a set of examples is also installed with
-this package. To see the examples in action run the following::
+This module will automatically keep the merged certifi+windows cacerts file up to date, even when the
+certifi module is updated.
 
-    AUTOWRAPT_BOOTSTRAP=autowrapt.examples python
+Simply install with::
 
-At the Python interpreter prompt then enter::
+  pip install python-certifi-win32
 
-    import this
+and requests should trust your hosts if your host system does.
 
-This should print out the Zen of Python as normal, but with an extra line
-added to the end.
+
+Acknowledgements
+----------------
+This module is inspired by a patch for python-certifi to implement this functionality: https://github.com/certifi/python-certifi/pull/54
+The method of patching at runtime is built from the autowrapt module: https://pypi.python.org/pypi/autowrapt

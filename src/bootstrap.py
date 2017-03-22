@@ -1,4 +1,5 @@
 import os
+import sys
 import site
 
 _registered = False
@@ -14,17 +15,15 @@ def _register_bootstrap_functions():
 
     _registered = True
 
-    # Now discover and register all post import hooks named in the
-    # AUTOWRAPT_BOOTSTRAP environment variable. The value of the
-    # environment variable must be a comma separated list.
+    # Now discover and register post import hook
     #
     # It should be safe to import wrapt at this point as this code
     # ill be executed after all module search path has been setup.
 
-    from wrapt import discover_post_import_hooks
+    if sys.platform == 'win32':
+        # This will register the patches
+        from . import wrapt_certifi
 
-    for name in os.environ.get('AUTOWRAPT_BOOTSTRAP', '').split(','):
-        discover_post_import_hooks(name)
 
 def _execsitecustomize_wrapper(wrapped):
     def _execsitecustomize(*args, **kwargs):
