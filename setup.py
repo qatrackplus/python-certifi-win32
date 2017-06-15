@@ -1,11 +1,13 @@
-import sys
 import os
 
 from setuptools import setup
-from distutils.sysconfig import get_python_lib
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
     long_description = readme.read()
+
+# Because the package is meant only be consumed on Windows,
+# we hardcode the python lib library
+python_lib_win = "lib/site-packages"
 
 setup(
     name = 'python-certifi-win32',
@@ -19,6 +21,6 @@ setup(
     url = 'https://gitlab.com/alelec/python-certifi-win32',
     packages = ['certifi_win32'],
     package_dir = {'certifi_win32': 'src'},
-    data_files = [(get_python_lib(prefix=''), ['python-certifi-win32-init.pth'])],
+    data_files = [(python_lib_win, ['python-certifi-win32-init.pth'])],
     install_requires = ['wrapt>=1.10.4', 'wincertstore', 'certifi'],
 )
