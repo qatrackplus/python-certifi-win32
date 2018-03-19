@@ -3,7 +3,9 @@ import sys
 import wrapt
 
 
-if sys.version_info >= (3, 4, 0):
+# Directly overriding download.HTTPAdapter working in debugging, not from console
+# Ignore it, just fall through to the certifi patch for now
+if False and sys.version_info >= (3, 4, 0):
     @wrapt.when_imported('pip._internal.download')
     def apply_patches(download):
 
