@@ -1,8 +1,8 @@
-import os
 import sys
 import site
 
 _registered = False
+
 
 def _register_bootstrap_functions():
     # This should in practice only ever be called once, but protect
@@ -22,7 +22,7 @@ def _register_bootstrap_functions():
 
     if sys.platform == 'win32':
         # This will register the patches
-        from . import wrapt_certifi
+        from . import wrapt_certifi, wrapt_pip
 
 
 def _execsitecustomize_wrapper(wrapped):
@@ -37,6 +37,7 @@ def _execsitecustomize_wrapper(wrapped):
                 _register_bootstrap_functions()
     return _execsitecustomize
 
+
 def _execusercustomize_wrapper(wrapped):
     def _execusercustomize(*args, **kwargs):
         try:
@@ -44,6 +45,7 @@ def _execusercustomize_wrapper(wrapped):
         finally:
             _register_bootstrap_functions()
     return _execusercustomize
+
 
 def bootstrap():
     # We want to do our real work as the very last thing in the 'site'
