@@ -3,5 +3,5 @@
 from .wincerts import generate_pem
 
 if __name__ == '__main__':
-	import certifi  # Ensure patch is in place
-	generate_pem()
+    import certifi  # Ensure patch is in place
+    generate_pem()
