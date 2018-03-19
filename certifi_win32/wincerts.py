@@ -17,7 +17,7 @@ def where():
     return PEM_PATH
 
 
-def get_pems(store_names=None):
+def get_pems_wincertstore(store_names=None):
     import wincertstore
     store_names = store_names or ("CA", "ROOT")
     for store_name in store_names:
@@ -33,6 +33,17 @@ def get_pems(store_names=None):
                     pem_entry = ''
 
                 yield pem_entry
+
+
+def get_pems(store_names=None):
+    try:
+        import ssl
+        ssl_context = ssl.create_default_context()
+        ssl_context.load_default_certs()
+        for der_cert in ssl_context.get_ca_certs(binary_form=True):
+            yield(ssl.DER_cert_to_PEM_cert(der_cert))
+    except AttributeError:
+        return get_pems_wincertstore(store_names)
 
 
 def certifi_pem():

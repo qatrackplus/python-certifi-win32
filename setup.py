@@ -21,5 +21,5 @@ setup(
     url='https://gitlab.com/alelec/python-certifi-win32',
     packages=['certifi_win32'],
     data_files=[(python_lib_win, ['python-certifi-win32-init.pth'])],
-    install_requires=['wrapt>=1.10.4', 'wincertstore', 'certifi', 'setuptools_scm'],
+    install_requires=['wrapt>=1.10.4', 'wincertstore;python_version<"3.4"', 'certifi', 'setuptools_scm'],
 )
