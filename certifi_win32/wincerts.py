@@ -8,7 +8,7 @@ This module copies the local store certificates to the current cacert.pem
 file and caches it localy.
 """
 
-PEM_PATH = os.path.join(os.environ['APPDATA'], '.certifi', 'cacert.pem')
+PEM_PATH = os.path.join(os.environ['LOCALAPPDATA'], '.certifi', 'cacert.pem')
 
 CERTIFI_PEM = None
 
