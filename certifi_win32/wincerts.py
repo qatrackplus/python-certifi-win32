@@ -40,8 +40,8 @@ def get_pems(store_names=None):
         import ssl
         ssl_context = ssl.create_default_context()
         ssl_context.load_default_certs()
-        for der_cert in ssl_context.get_ca_certs(binary_form=True):
-            yield(ssl.DER_cert_to_PEM_cert(der_cert))
+        return [ssl.DER_cert_to_PEM_cert(der_cert) for der_cert in ssl_context.get_ca_certs(binary_form=True)]
+            
     except AttributeError:
         return get_pems_wincertstore(store_names)
 
