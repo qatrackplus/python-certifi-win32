@@ -1,5 +1,6 @@
 import sys
 import site
+import wrapt
 
 _registered = False
 
