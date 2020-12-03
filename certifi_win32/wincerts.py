@@ -8,7 +8,11 @@ This module copies the local store certificates to the current cacert.pem
 file and caches it localy.
 """
 
-PEM_PATH = os.path.join(os.environ['LOCALAPPDATA'], '.certifi', 'cacert.pem')
+DEFAULT_PEM_PATH = os.path.join(os.environ['LOCALAPPDATA'], '.certifi', 'cacert.pem')
+BACKUP_PEM_PATH = os.path.join(os.environ['TEMP'], '.certifi', 'cacert.pem')
+
+PEM_PATH = DEFAULT_PEM_PATH
+
 
 CERTIFI_PEM = None
 
@@ -109,6 +113,18 @@ def generate_pem():
     handle = _CreateMutex(None, False, b'global_certifi_win32')
     _WaitForSingleObject(handle, INFINITE)
 
+    try:
+        write_pem()
+    except PermissionError:
+        global PEM_PATH
+        PEM_PATH = BACKUP_PEM_PATH
+        write_pem()
+
+    _ReleaseMutex(handle)
+    _CloseHandle(handle)
+
+
+def write_pem():
     if not os.path.exists(PEM_PATH):
         os.makedirs(os.path.dirname(PEM_PATH))
 
@@ -120,9 +136,6 @@ def generate_pem():
     with codecs.open(PEM_PATH, 'a', 'utf-8') as f:
         for pem in get_pems():
             f.write(pem)
-
-    _ReleaseMutex(handle)
-    _CloseHandle(handle)
 
 
 if __name__ == '__main__':
