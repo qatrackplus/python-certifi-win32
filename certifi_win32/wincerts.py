@@ -41,7 +41,7 @@ def get_pems(store_names=None):
         ssl_context = ssl.create_default_context()
         ssl_context.load_default_certs()
         return [ssl.DER_cert_to_PEM_cert(der_cert) for der_cert in ssl_context.get_ca_certs(binary_form=True)]
-            
+
     except AttributeError:
         return get_pems_wincertstore(store_names)
 
@@ -110,7 +110,7 @@ def generate_pem():
     _WaitForSingleObject(handle, INFINITE)
 
     if not os.path.exists(PEM_PATH):
-        os.makedirs(os.path.dirname(PEM_PATH))
+        os.makedirs(os.path.dirname(PEM_PATH), exist_ok=True)
 
     orig_pem = certifi_pem()
     import shutil
